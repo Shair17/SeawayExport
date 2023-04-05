@@ -1,13 +1,15 @@
 import {useState, useRef} from 'react';
-import {Alert} from 'react-native';
+import {Alert, PermissionsAndroid} from 'react-native';
 import {DropdownRef} from 'react-native-magnus';
-// This should be replaced with react-native-vision-camera
-import * as ImagePicker from 'expo-image-picker';
+import {
+  launchCamera,
+  launchImageLibrary,
+  ImagePickerResponse,
+} from 'react-native-image-picker';
 import {Notifier} from 'react-native-notifier';
 
 export const useUploadPhotos = () => {
-  const [photos, setPhotos] =
-    useState<ImagePicker.ImagePickerResult['assets']>(null);
+  const [photos, setPhotos] = useState<ImagePickerResponse['assets']>();
   const photoDropdownRef = useRef<DropdownRef>(null);
   const [photoPreviewOverlayVisible, setPhotoPreviewOverlayVisible] =
     useState<boolean>(false);
@@ -17,24 +19,25 @@ export const useUploadPhotos = () => {
 
   const takePhoto = async () => {
     try {
-      const {status} = await ImagePicker.requestCameraPermissionsAsync();
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+      );
 
-      if (status === ImagePicker.PermissionStatus.GRANTED) {
-        const {assets, canceled} = await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          // base64: true,
-          quality: 1,
-          allowsMultipleSelection: true,
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        const photo = await launchCamera({
+          maxHeight: 500,
+          maxWidth: 500,
+          mediaType: 'photo',
+          includeBase64: true,
+          quality: 0.5,
         });
 
-        if (canceled) {
-          return;
-        }
+        if (!photo.assets) return;
 
-        if (photos == null) {
-          setPhotos(assets);
+        if (photos) {
+          setPhotos([...photos, ...photo.assets]);
         } else {
-          setPhotos([...photos, ...assets]);
+          setPhotos([...photo.assets]);
         }
       } else {
         Notifier.showNotification({
@@ -55,29 +58,22 @@ export const useUploadPhotos = () => {
 
   const pickPhotoFromGallery = async () => {
     try {
-      const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const photo = await launchImageLibrary({
+        maxHeight: 500,
+        maxWidth: 500,
+        mediaType: 'photo',
+        includeBase64: true,
+        quality: 0.5,
+      });
 
-      if (status === ImagePicker.PermissionStatus.GRANTED) {
-        const {assets, canceled} = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          // base64: true,
-          quality: 1,
-          allowsMultipleSelection: true,
-        });
+      if (photo.didCancel || !photo.assets) return;
 
-        if (canceled) {
-          return;
-        }
-
-        if (photos == null) {
-          setPhotos(assets);
-        } else {
-          setPhotos([...photos, ...assets]);
-        }
+      if (photos) {
+        setPhotos([...photos, ...photo.assets]);
+      } else {
+        setPhotos([...photo.assets]);
       }
     } catch (error) {
-      // console.log(error);
-
       Notifier.showNotification({
         title: 'Error',
         description: 'An unknown error has occurred.',

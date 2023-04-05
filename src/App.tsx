@@ -14,11 +14,11 @@ export default function App() {
 
   return (
     <NotifierWrapper>
-      <NavigationContainer>
-        <ThemeProvider>
+      <ThemeProvider>
+        <NavigationContainer>
           <Root />
-        </ThemeProvider>
-      </NavigationContainer>
+        </NavigationContainer>
+      </ThemeProvider>
     </NotifierWrapper>
   );
 }

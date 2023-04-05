@@ -2,11 +2,6 @@ import React, {useState} from 'react';
 import {StatusBar} from 'react-native';
 import {Div, Text, Button, Input} from 'react-native-magnus';
 // Should be replaced with react-native-vision-camera
-import {
-  BarCodeScannedCallback,
-  BarCodeScanner,
-  PermissionStatus,
-} from 'expo-barcode-scanner';
 // Should be replaced with react-native-vision-camera
 import {useCameraPermissions} from '../../hooks/useCameraPermissions';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -44,15 +39,13 @@ export const AskDataScreen: React.FC<Props> = ({navigation}) => {
     setScanned(false);
   };
 
-  const handleBarCodeScanned: BarCodeScannedCallback = ({type, data}) => {
-    if (scanned) return;
-
-    setScanned(true);
-    setVin({
-      ...vin,
-      encodedVIN: data,
-    });
-
+  const handleBarCodeScanned = () => {
+    // if (scanned) return;
+    // setScanned(true);
+    // setVin({
+    //   ...vin,
+    //   encodedVIN: data,
+    // });
     // Notifier.showNotification({
     // 	title: 'Success',
     // 	description: 'Success decoding VIN!',
@@ -61,8 +54,7 @@ export const AskDataScreen: React.FC<Props> = ({navigation}) => {
     // 		alertType: 'success',
     // 	},
     // });
-
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
   };
 
   const decodeVin = async () => {
@@ -117,25 +109,25 @@ export const AskDataScreen: React.FC<Props> = ({navigation}) => {
       });
   };
 
-  if (hasPermission === PermissionStatus.UNDETERMINED) {
-    return (
-      <Div flex={1} bg="#fff" alignItems="center" justifyContent="center">
-        <Text fontSize="5xl" textAlign="center">
-          Requesting for camera permission...
-        </Text>
-      </Div>
-    );
-  }
+  // if (hasPermission === PermissionStatus.UNDETERMINED) {
+  //   return (
+  //     <Div flex={1} bg="#fff" alignItems="center" justifyContent="center">
+  //       <Text fontSize="5xl" textAlign="center">
+  //         Requesting for camera permission...
+  //       </Text>
+  //     </Div>
+  //   );
+  // }
 
-  if (hasPermission === PermissionStatus.DENIED) {
-    return (
-      <Div flex={1} bg="#fff" alignItems="center" justifyContent="center">
-        <Text fontSize="5xl" textAlign="center">
-          No access to camera.
-        </Text>
-      </Div>
-    );
-  }
+  // if (hasPermission === PermissionStatus.DENIED) {
+  //   return (
+  //     <Div flex={1} bg="#fff" alignItems="center" justifyContent="center">
+  //       <Text fontSize="5xl" textAlign="center">
+  //         No access to camera.
+  //       </Text>
+  //     </Div>
+  //   );
+  // }
 
   return (
     <Div flex={1} bg="#fff">
@@ -150,7 +142,7 @@ export const AskDataScreen: React.FC<Props> = ({navigation}) => {
           w={300}
           overflow="hidden"
           rounded="lg">
-          <BarCodeScanner
+          {/* <BarCodeScanner
             onBarCodeScanned={handleBarCodeScanned}
             style={{
               position: 'absolute',
@@ -159,7 +151,7 @@ export const AskDataScreen: React.FC<Props> = ({navigation}) => {
             }}
             focusable
             type="back"
-          />
+          /> */}
         </Div>
 
         <Div position="absolute" bottom={40} w="100%" p="xl">

@@ -52,8 +52,8 @@ export const PhotosScreen: React.FC<Props> = ({navigation, route}) => {
       const uri =
         Platform.OS === 'android'
           ? photo.uri
-          : photo.uri.replace('file://', '');
-      const fileName = photo.uri.split('/').pop();
+          : photo.uri?.replace('file://', '');
+      const fileName = photo.uri?.split('/').pop();
       const match = /\.(\w+)$/.exec(photo.fileName as string);
       const ext = match?.[1];
       const type = match ? `image/${match[1]}` : `image`;
@@ -139,8 +139,8 @@ export const PhotosScreen: React.FC<Props> = ({navigation, route}) => {
                   <TouchableOpacity
                     style={{flex: 1}}
                     activeOpacity={0.8}
-                    onPress={() => openPhotoPreview(item.uri)}
-                    onLongPress={() => deletePhoto(item.uri)}>
+                    onPress={() => openPhotoPreview(item.uri!)}
+                    onLongPress={() => deletePhoto(item.uri!)}>
                     <Div flex={1} m={5} rounded="lg" h={150} overflow="hidden">
                       <Image
                         // rounded="lg"
@@ -153,7 +153,7 @@ export const PhotosScreen: React.FC<Props> = ({navigation, route}) => {
                   </TouchableOpacity>
                 );
               }}
-              keyExtractor={item => item.uri}
+              keyExtractor={item => item.uri!}
             />
           ) : (
             <PressHereToUploadPhotos onPress={openPhotoDropdown} />

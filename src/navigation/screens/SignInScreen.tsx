@@ -66,6 +66,11 @@ export const SignInScreen: React.FC<Props> = ({navigation}) => {
       return;
     }
 
+    // Testing purpose only
+    setToken('blablabla');
+
+    return;
+
     executeSignIn({
       params: {
         username: form.username,
